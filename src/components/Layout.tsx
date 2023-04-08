@@ -7,7 +7,7 @@ type IProps = {
 function Layout({ children }: IProps) {
   return (
     <>
-      <div className="py-4 bg-gray-200 flex justify-center">Playground</div>
+      {/* <div className="py-4 bg-gray-200 flex justify-center">Playground</div> */}
       <div>{children}</div>
     </>
   );

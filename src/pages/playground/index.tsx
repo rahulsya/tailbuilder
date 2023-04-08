@@ -33,31 +33,79 @@ const listComponents = [
   },
 ];
 
+const availComponents = [
+  {
+    id: 1,
+    name: 'dark-navigation',
+    component: <Navigations type="dark" />,
+  },
+  {
+    id: 2,
+    name: 'light-navigation',
+    component: <Navigations />,
+  },
+  {
+    id: 3,
+    name: 'sample-hero',
+    component: <Hero />,
+  },
+  {
+    id: 4,
+    name: 'sample-hero-2',
+    component: <Hero type="hero-two" />,
+  },
+];
+
 function Playground() {
-  const [components, setComponents] = useState(listComponents);
+  const [components, setComponents] = useState([]);
+
   const [showListComponent, isShowListComponent] = useState(false);
 
   const reorder = (list, startIndex: number, lastIndex: number) => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
-    console.log('removed item', removed);
-
     result.splice(lastIndex, 0, removed);
     return result;
   };
 
-  const onDragEnd = (result: any) => {
-    console.log(result);
+  const addComponents = (list, source: number, destination: number) => {
+    const currComponents = Array.from(list);
+    const dummyCom = availComponents[source];
+    currComponents.splice(destination, 0, {
+      ...dummyCom,
+      id: components.length + 1,
+    });
+    return currComponents;
+  };
 
+  const onDragEnd = (result: any) => {
     const { source, destination } = result;
 
     if (!destination) {
       return;
     }
 
-    const sorting = reorder(components, source.index, destination.index);
-    // console.log(sorting);
-    setComponents(sorting);
+    if (
+      source.droppableId === 'components-avail' &&
+      destination.droppableId === 'my-droppable'
+    ) {
+      console.log('added new comp');
+
+      const newComponents = addComponents(
+        components,
+        source.index,
+        destination.index
+      );
+      setComponents(newComponents);
+    }
+
+    if (
+      source.droppableId === 'my-droppable' &&
+      destination.droppableId === 'my-droppable'
+    ) {
+      const sorting = reorder(components, source.index, destination.index);
+      setComponents(sorting);
+    }
   };
 
   const addNewComponent = (index: number) => {
@@ -74,54 +122,109 @@ function Playground() {
 
   return (
     <>
-      <div className="flex mt-5 ">
+      <div className="flex min-h-screen">
         {/* <div>component</div> */}
-        <div className="container mx-auto py-5 px-12 h-[800px] overflow-auto bg-gray-100 rounded-lg">
-          {/* <div className="w-1/4 bg-gray-500"></div> */}
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="my-droppable">
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div className="w-1/4 bg-white py-5 px-5">
+            <Droppable droppableId="components-avail">
               {(provided, snapshot) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {components.map((item, index) => (
+                  {availComponents.map((item, index) => (
                     <Draggable
                       key={item.id}
-                      draggableId={`item-${item.id}`}
                       index={index}
+                      draggableId={`comps-${item.id}`}
                     >
                       {(provided, snapshot) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          style={provided.draggableProps.style}
-                          className={`py-5 `}
-                        >
-                          {snapshot.isDragging ? (
-                            <>
-                              <div className="w-full flex justify-center">
-                                <button className="capitalize w-full px-3 py-4 rounded-lg border-dashed border-2 border-sky-500">
-                                  Component-{item.name}
-                                </button>
+                        <>
+                          {snapshot?.isDragging && (
+                            <div className={`pt-5`}>
+                              <div className="w-full bg-gray-200 rounded-md px-4 py-3">
+                                {item.name}
                               </div>
-                            </>
-                          ) : (
-                            <Hover
-                              onAddComponent={() => addNewComponent(index)}
-                              isDragable={snapshot.isDragging}
-                            >
-                              {item.component}
-                            </Hover>
+                            </div>
                           )}
-                        </div>
+                          <div
+                            key={index}
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            // style={provided.draggableProps.style}
+                            className={`py-2`}
+                          >
+                            <div className="w-full bg-gray-400 rounded-md px-4 py-3">
+                              {item.name}
+                            </div>
+                          </div>
+                        </>
                       )}
                     </Draggable>
                   ))}
                 </div>
               )}
             </Droppable>
-          </DragDropContext>
-          {/* <div className="w-1/4 bg-gray-200 ">c</div> */}
-        </div>
+          </div>
+          <div className="container mx-auto px-12 py-5 h-screen overflow-auto bg-gray-100 rounded-lg">
+            <Droppable droppableId="my-droppable">
+              {(provided, snapshot) => (
+                <div
+                  className={`min-h-full`}
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                >
+                  {components.length == 0 && (
+                    <div className="capitalize w-full px-3 py-8 rounded-lg border-dashed border-2 border-yellow-500 text-center">
+                      Drag Components Here
+                    </div>
+                  )}
+                  {components.map((item, index) => (
+                    <React.Fragment key={item.id}>
+                      <Draggable
+                        key={item.id}
+                        draggableId={`item-${item.id}`}
+                        index={index}
+                      >
+                        {(provided, snapshot) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            style={provided.draggableProps.style}
+                            className={`py-5 `}
+                          >
+                            {snapshot.isDragging ? (
+                              <>
+                                <div className="w-full flex justify-center">
+                                  <button className="capitalize w-full px-3 py-4 rounded-lg border-dashed border-2 border-sky-500">
+                                    Component-{item.name}
+                                  </button>
+                                </div>
+                              </>
+                            ) : (
+                              <Hover
+                                onAddComponent={() => addNewComponent(index)}
+                                isDragable={snapshot.isDragging}
+                              >
+                                {item.component}
+                              </Hover>
+                            )}
+                          </div>
+                        )}
+                      </Draggable>
+                    </React.Fragment>
+                  ))}
+                  {provided.placeholder}
+                  {/* {snapshot.draggingOverWith && (
+                    <div className="capitalize w-full px-3 py-2 rounded-lg border-dashed border-2 border-yellow-500 text-center">
+                      drop here
+                    </div>
+                  )} */}
+                </div>
+              )}
+            </Droppable>
+            {/* <div className="w-1/4 bg-gray-200 ">c</div> */}
+          </div>
+        </DragDropContext>
       </div>
     </>
   );
