@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
-import { Items } from './data-items';
+import { Items } from '../../utils/data-items';
 import { exampleProps } from '../../utils/interfaces';
 
 function Ex() {
