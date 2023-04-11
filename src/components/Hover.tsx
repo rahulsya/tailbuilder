@@ -6,15 +6,17 @@ type IProps = {
 };
 function Hover({ children, isDragable, onAddComponent }: IProps) {
   const [isHover, setIsHover] = useState(false);
+  const [active, setActive] = useState(false);
   return (
     <div
-      onMouseEnter={() => !isDragable && setIsHover(true)}
-      onMouseLeave={() => setIsHover(false)}
+      onClick={() => setActive(!active)}
+      // onMouseEnter={() => !isDragable && setIsHover(true)}
+      // onMouseLeave={() => setIsHover(false)}
       className={`w-full cursor-pointer ${
         isDragable && 'border-2 rounded-lg border-blue-400'
-      }`}
+      } ${active && 'border-2 rounded-lg border-blue-400'} `}
     >
-      {isHover && (
+      {/* {isHover && (
         <div className="w-full flex justify-center">
           <button
             onClick={onAddComponent}
@@ -22,6 +24,12 @@ function Hover({ children, isDragable, onAddComponent }: IProps) {
           >
             Add Components
           </button>
+        </div>
+      )} */}
+      {active && (
+        <div className="flex flex-end justify-end">
+          <p>delete</p>
+          <p>move up</p>
         </div>
       )}
       {children}

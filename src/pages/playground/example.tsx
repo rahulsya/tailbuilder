@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { Items } from './data-items';
+import { exampleProps } from '../../utils/interfaces';
 
 function Ex() {
   const [items, setItems] = useState([Items(10), Items(5, 10), Items(5, 16)]);
-  console.log(items);
 
-  const reorder = (list, startIndex, endIndex) => {
+  const reorder = (
+    list: exampleProps[],
+    startIndex: number,
+    endIndex: number
+  ) => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
@@ -14,21 +18,26 @@ function Ex() {
     return result;
   };
 
-  const move = (source, destination, droppableSource, droppableDestination) => {
+  const move = (
+    source: exampleProps[],
+    destination: exampleProps[],
+    droppableSource: any,
+    droppableDestination: any
+  ) => {
     const sourceClone = Array.from(source);
     const destClone = Array.from(destination);
     const [removed] = sourceClone.splice(droppableSource.index, 1);
 
     destClone.splice(droppableDestination.index, 0, removed);
 
-    const result = {};
+    const result: { [key: number]: exampleProps[] } = {};
     result[droppableSource.droppableId] = sourceClone;
     result[droppableDestination.droppableId] = destClone;
 
     return result;
   };
 
-  const getItemStyle = (isDragging: boolean, draggableStyle) => ({
+  const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
     // some basic styles to make the items look a bit nicer
     userSelect: 'none',
     padding: 8 * 2,
@@ -48,8 +57,6 @@ function Ex() {
   });
 
   const onDragend = (result: any) => {
-    console.log(result);
-
     const { source, destination } = result;
 
     // dropped outside the list

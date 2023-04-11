@@ -5,33 +5,7 @@ import Navigations from '@/components/playground/navigations';
 import Hero from '@/components/playground/hero';
 import Hover from '@/components/Hover';
 
-const listComponents = [
-  {
-    id: 1,
-    name: 'navigation',
-    component: <Navigations type="dark" />,
-  },
-  {
-    id: 2,
-    name: 'hero',
-    component: <Hero />,
-  },
-  {
-    id: 3,
-    name: 'hero',
-    component: <Hero type="hero-two" />,
-  },
-  {
-    id: 4,
-    name: 'hero',
-    component: <Hero />,
-  },
-  {
-    id: 5,
-    name: 'hero',
-    component: <Hero type="hero-two" />,
-  },
-];
+import { availComponenProps } from '@/utils/interfaces';
 
 const availComponents = [
   {
@@ -57,18 +31,26 @@ const availComponents = [
 ];
 
 function Playground() {
-  const [components, setComponents] = useState([]);
+  const [components, setComponents] = useState<availComponenProps[] | []>([]);
 
   const [showListComponent, isShowListComponent] = useState(false);
 
-  const reorder = (list, startIndex: number, lastIndex: number) => {
+  const reorder = (
+    list: availComponenProps[],
+    startIndex: number,
+    lastIndex: number
+  ) => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
     result.splice(lastIndex, 0, removed);
     return result;
   };
 
-  const addComponents = (list, source: number, destination: number) => {
+  const addComponents = (
+    list: availComponenProps[],
+    source: number,
+    destination: number
+  ) => {
     const currComponents = Array.from(list);
     const dummyCom = availComponents[source];
     currComponents.splice(destination, 0, {
